@@ -70,6 +70,28 @@ services:
       - metadata-storage
       - zookeeper
 
+  router:
+    image: apache/druid:29.0.0
+    container_name: druid-router
+    command: ["router"]
+    env_file:
+      - .env
+    environment:
+      DRUID_CONFIG_router: /opt/druid/conf/druid/cluster/query/router/runtime.properties
+      DRUID_SET_HOST: "0"
+      druid_host: router
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8888:8888"
+    depends_on:
+      - broker
+      - coordinator
+      - overlord
+
   broker:
     image: apache/druid:29.0.0
     container_name: druid-broker
