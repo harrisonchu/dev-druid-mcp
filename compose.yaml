@@ -1,0 +1,140 @@
+services:
+  zookeeper:
+    image: zookeeper:3.8
+    container_name: druid-zookeeper
+    environment:
+      ZOO_4LW_COMMANDS_WHITELIST: ruok,stat,mntr,conf
+      ZOO_STANDALONE_ENABLED: "true"
+      ZOO_AUTOPURGE_PURGEINTERVAL: "1"
+    ports:
+      - "2181:2181"
+
+  metadata-storage:
+    image: postgres:15
+    container_name: druid-metadata
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-druid}
+      POSTGRES_USER: ${POSTGRES_USER:-druid}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-druid}
+    ports:
+      - "5432:5432"
+    volumes:
+      - metadata-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-druid} -d ${POSTGRES_DB:-druid}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  coordinator:
+    image: apache/druid:29.0.0
+    container_name: druid-coordinator
+    command: ["coordinator"]
+    env_file:
+      - .env
+    environment:
+      DRUID_CONFIG_coordinator: /opt/druid/conf/druid/cluster/master/coordinator/runtime.properties
+      DRUID_SET_HOST: "0"
+      druid_host: coordinator
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8081:8081"
+    depends_on:
+      - metadata-storage
+      - zookeeper
+
+  overlord:
+    image: apache/druid:29.0.0
+    container_name: druid-overlord
+    command: ["overlord"]
+    env_file:
+      - .env
+    environment:
+      DRUID_CONFIG_overlord: /opt/druid/conf/druid/cluster/master/overlord/runtime.properties
+      DRUID_SET_HOST: "0"
+      druid_host: overlord
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8090:8090"
+    depends_on:
+      - metadata-storage
+      - zookeeper
+
+  broker:
+    image: apache/druid:29.0.0
+    container_name: druid-broker
+    command: ["broker"]
+    env_file:
+      - .env
+    environment:
+      DRUID_SET_HOST: "0"
+      druid_host: broker
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8082:8082"
+    depends_on:
+      - coordinator
+      - overlord
+      - metadata-storage
+      - zookeeper
+
+  historical:
+    image: apache/druid:29.0.0
+    container_name: druid-historical
+    command: ["historical"]
+    env_file:
+      - .env
+    environment:
+      DRUID_SET_HOST: "0"
+      druid_host: historical
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8083:8083"
+    depends_on:
+      - coordinator
+      - overlord
+      - metadata-storage
+      - zookeeper
+
+  middlemanager:
+    image: apache/druid:29.0.0
+    container_name: druid-middlemanager
+    command: ["middleManager"]
+    env_file:
+      - .env
+    environment:
+      DRUID_SET_HOST: "0"
+      druid_host: middlemanager
+    volumes:
+      - ./druid/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid/logs:/opt/druid/log
+      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid/storage:/opt/druid/var/druid
+    ports:
+      - "8091:8091"
+    depends_on:
+      - coordinator
+      - overlord
+      - metadata-storage
+      - zookeeper
+
+volumes:
+  metadata-data:
