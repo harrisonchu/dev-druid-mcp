@@ -53,6 +53,11 @@ Local Apache Druid development environment wired for MCP agents.
    ```bash
    docker compose down
    ```
+7. Rebuild and hot swap edited Druid modules without a full cluster restart:
+   ```bash
+   python3 tools/hotswap.py --dry-run
+   ```
+   The Python helper inspects your changes (or an explicit `--modules` list), runs a targeted `mvn -pl <modules> -am -DskipTests package`, copies the resulting `target/*.jar` outputs into `druid/overrides/`, restarts the Docker services, and reports a JSON status summary. Drop the `--dry-run` flag to apply changes for real once you’re satisfied with the detected modules.
 
 ## Configuration knobs
 ### Shared settings
