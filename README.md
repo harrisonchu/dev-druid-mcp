@@ -3,7 +3,7 @@
 Local Apache Druid development environment wired for MCP agents.
 
 ## What you get
-- Docker Compose stack with Zookeeper, PostgreSQL metadata store, and standalone Druid services (`coordinator`, `overlord`, `broker`, `historical`, `middleManager`).
+- Docker Compose stack with Zookeeper, PostgreSQL metadata store, and standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`).
 - Quickstart-derived configuration tree under `druid/conf` with lighter memory footprints for laptop use.
 - Bind mounts for logs (`druid/logs`), deep storage (`druid/storage`), and override jars (`druid/overrides`).
 
@@ -15,7 +15,7 @@ Local Apache Druid development environment wired for MCP agents.
 │   ├── conf/druid/cluster
 │   │   ├── _common/
 │   │   ├── master/{coordinator,overlord}/
-│   │   ├── query/broker/
+│   │   ├── query/{broker,router}/
 │   │   └── data/{historical,middleManager}/
 │   ├── logs/
 │   ├── overrides/
@@ -25,7 +25,7 @@ Local Apache Druid development environment wired for MCP agents.
 
 ## Prerequisites
 - Docker and Docker Compose (Compose V2 CLI).
-- Enough free RAM/CPU for six JVMs; defaults stay under ~8 GiB RAM.
+- Enough free RAM/CPU for six JVMs plus the router; defaults stay under ~8 GiB RAM.
 
 ## Usage
 1. Start the stack:
@@ -37,17 +37,19 @@ Local Apache Druid development environment wired for MCP agents.
    docker compose ps
    ```
    All services should show `Up`; Postgres reports `healthy` once ready.
-3. Tail logs (examples):
+3. Access the Druid web console via the router at <http://localhost:8888>.
+4. Tail logs (examples):
    ```bash
+   docker compose logs -f router
    docker compose logs -f coordinator
    docker compose logs -f overlord
    ```
    Service-specific logs also land in `druid/logs/${sys:druid.node.type}.log` because of the bind mount.
-4. Restart a component after tweaking configs:
+5. Restart a component after tweaking configs:
    ```bash
    docker compose restart broker
    ```
-5. Shut everything down (keeps the metadata volume):
+6. Shut everything down (keeps the metadata volume):
    ```bash
    docker compose down
    ```
@@ -64,6 +66,7 @@ Local Apache Druid development environment wired for MCP agents.
 - Coordinator: `druid/conf/druid/cluster/master/coordinator/runtime.properties`
 - Overlord: `.../master/overlord/runtime.properties`
 - Broker: `.../query/broker/runtime.properties`
+- Router: `.../query/router/runtime.properties`
 - Historical: `.../data/historical/runtime.properties`
 - MiddleManager: `.../data/middleManager/runtime.properties`
 
