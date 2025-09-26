@@ -148,16 +148,14 @@ def _find_changed_files(druid_src: Path, since: str | None) -> Iterable[Path]:
 
 
 def _module_for_path(druid_src: Path, rel_path: Path) -> str | None:
-    absolute = druid_src / rel_path
-    if not absolute.exists():
-        absolute = absolute.resolve()
+    absolute = (druid_src / rel_path).resolve()
     try:
         absolute.relative_to(druid_src)
     except ValueError:
         return None
 
-    current = absolute
-    while current != druid_src:
+    current = absolute if absolute.is_dir() else absolute.parent
+    while current != druid_src and current != current.parent:
         if (current / "pom.xml").exists():
             return current.relative_to(druid_src).as_posix()
         current = current.parent
