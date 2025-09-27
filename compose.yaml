@@ -37,11 +37,13 @@ services:
     environment:
       DRUID_CONFIG_coordinator: /opt/druid/conf/druid/cluster/master/coordinator/runtime.properties
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: coordinator
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8081:8081"
@@ -58,11 +60,13 @@ services:
     environment:
       DRUID_CONFIG_overlord: /opt/druid/conf/druid/cluster/master/overlord/runtime.properties
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: overlord
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8090:8090"
@@ -79,11 +83,13 @@ services:
     environment:
       DRUID_CONFIG_router: /opt/druid/conf/druid/cluster/query/router/runtime.properties
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: router
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8888:8888"
@@ -100,11 +106,13 @@ services:
       - .env
     environment:
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: broker
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8082:8082"
@@ -122,11 +130,13 @@ services:
       - .env
     environment:
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: historical
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8083:8083"
@@ -144,11 +154,13 @@ services:
       - .env
     environment:
       DRUID_SET_HOST: "0"
+      DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: middlemanager
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
     ports:
       - "8091:8091"
