@@ -6,6 +6,8 @@
   <Properties>
     <!-- Override by setting DRUID_LOG_DIR env var; defaults to ./log in container. -->
     <Property name="druid.log.path" value="log" />
+    <!-- Use node type when it is provided, otherwise fall back to the container hostname. -->
+    <Property name="druid.log.basename" value="${sys:druid.node.type:-${env:druid_host:-druid}}" />
   </Properties>
 
   <Appenders>
@@ -14,8 +16,8 @@
     </Console>
 
     <RollingRandomAccessFile name="FileAppender"
-                             fileName="${sys:druid.log.path}/${sys:druid.node.type}.log"
-                             filePattern="${sys:druid.log.path}/${sys:druid.node.type}.%d{yyyyMMdd}.log">
+                             fileName="${sys:druid.log.path}/${sys:druid.log.basename}.log"
+                             filePattern="${sys:druid.log.path}/${sys:druid.log.basename}.%d{yyyyMMdd}.log">
       <PatternLayout pattern="%d{ISO8601} %p [%t] %c -%notEmpty{ [%markerSimpleName]} %m%n"/>
       <Policies>
         <TimeBasedTriggeringPolicy interval="1" modulate="true"/>

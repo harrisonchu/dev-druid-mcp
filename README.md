@@ -82,6 +82,14 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 
 ### Overrides and custom code
 - Drop additional jars in `druid/overrides` to make them visible under `/opt/druid/overrides` inside every container.
+- Bind mount `druid-override.sh` over `/opt/druid/bin/druid.sh` so those jars are first on the runtime classpath; configure `DRUID_OVERRIDES` if you need a different glob.
+  ```yaml
+  volumes:
+    - ./druid/overrides:/opt/druid/overrides:ro
+    - ./druid-override.sh:/opt/druid/bin/druid.sh:ro
+  environment:
+    - DRUID_OVERRIDES=/opt/druid/overrides/*
+  ```
 - Place a full Druid distro in `druid-src/` if you want to swap binaries; the compose stack currently uses the official `apache/druid:29.0.0` image.
 
 ## Troubleshooting tips
@@ -95,3 +103,5 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 ## Next steps
 - Load sample data via the Druid console (`http://localhost:8888`) or API once the stack is up.
 - Wire additional observability tooling (Prometheus, Grafana) by extending `compose.yaml` if needed.
+- making sure druid-src is always running the right version that container is pulling seems brittle.
+- how to expose hotswap as a tool? and telemetry collection also as tools. MCP?
