@@ -7,6 +7,7 @@ This repository expects MCP agents to follow a tight loop when modifying Apache 
    - From repo root run `docker compose up -d`; wait until every service reports `Up` (`docker compose ps`).
 
 2. **Make code changes in `druid-src/`**
+   - Run a "git stash" to make sure no changes from previous sessions are included
    - Edit Java modules inside `druid-src`, not `druid/`.
    - Keep the change focused; 
 
