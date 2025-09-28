@@ -53,6 +53,10 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     druid_src = repo_root / "druid-src"
     overrides_dir = repo_root / "druid" / "overrides"
+    try:
+        overrides_display = overrides_dir.relative_to(repo_root).as_posix()
+    except ValueError:
+        overrides_display = str(overrides_dir)
 
     if not druid_src.exists():
         print(
@@ -74,8 +78,22 @@ def main() -> int:
     log_heading("Building modules", ", ".join(modules))
     run_maven_build(druid_src, modules, dry_run=args.dry_run)
 
-    log_heading("Deploying jars", f"-> {overrides_dir}")
-    jars = deploy_jars(druid_src, overrides_dir, modules, dry_run=args.dry_run)
+    log_heading("Deploying jars", f"-> {overrides_display}")
+    jars = deploy_jars(
+        druid_src,
+        overrides_dir,
+        overrides_display,
+        modules,
+        dry_run=args.dry_run,
+    )
+
+    logs_dir = repo_root / "druid" / "logs"
+    try:
+        logs_display = logs_dir.relative_to(repo_root).as_posix()
+    except ValueError:
+        logs_display = str(logs_dir)
+    log_heading("Clearing logs", logs_display)
+    clear_logs(logs_dir, logs_display, dry_run=args.dry_run)
 
     log_heading("Restarting Docker", "docker compose restart")
     services = restart_docker(repo_root, dry_run=args.dry_run)
@@ -185,26 +203,47 @@ def run_maven_build(druid_src: Path, modules: Sequence[str], dry_run: bool = Fal
 def deploy_jars(
     druid_src: Path,
     overrides_dir: Path,
+    overrides_display: str,
     modules: Sequence[str],
     dry_run: bool = False,
 ) -> List[str]:
-    jars_copied: List[str] = []
-    if not dry_run:
-        overrides_dir.mkdir(parents=True, exist_ok=True)
-
+    jar_sources: List[Path] = []
     for module in modules:
         target_dir = druid_src / module / "target"
         if not target_dir.exists():
             print(f"  warning: no target/ directory for module {module}")
             continue
         for jar in sorted(target_dir.glob("*.jar")):
-            dest = overrides_dir / jar.name
-            jars_copied.append(dest.relative_to(overrides_dir).as_posix())
-            if dry_run:
-                print(f"  dry-run: would copy {jar} -> {dest}")
-            else:
-                shutil.copy2(jar, dest)
-                print(f"  copied {jar.name} -> overrides/{dest.name}")
+            jar_sources.append(jar)
+
+    if not jar_sources:
+        return []
+
+    existing_override_jars = []
+    if overrides_dir.exists():
+        existing_override_jars = sorted(overrides_dir.glob("*.jar"))
+
+    if dry_run:
+        if existing_override_jars:
+            print(
+                f"  dry-run: would remove {len(existing_override_jars)} jar(s) from {overrides_display}"
+            )
+    else:
+        overrides_dir.mkdir(parents=True, exist_ok=True)
+        for existing in existing_override_jars:
+            existing.unlink()
+            print(f"  removed {overrides_display}/{existing.name}")
+
+    jars_copied: List[str] = []
+    for jar in jar_sources:
+        dest = overrides_dir / jar.name
+        jars_copied.append(dest.relative_to(overrides_dir).as_posix())
+        dest_display = f"{overrides_display}/{jar.name}"
+        if dry_run:
+            print(f"  dry-run: would copy {jar} -> {dest_display}")
+        else:
+            shutil.copy2(jar, dest)
+            print(f"  copied {jar.name} -> {dest_display}")
     return jars_copied
 
 
@@ -253,6 +292,18 @@ def _list_compose_services(compose_cmd: Sequence[str], repo_root: Path) -> List[
         text=True,
     )
     return [line.strip() for line in result.stdout.splitlines() if line.strip()]
+
+
+def clear_logs(logs_dir: Path, display_name: str, dry_run: bool = False) -> None:
+    if not logs_dir.exists():
+        return
+    if dry_run:
+        print(f"  dry-run: would remove contents of {display_name}")
+        return
+
+    shutil.rmtree(logs_dir)
+    logs_dir.mkdir(parents=True, exist_ok=True)
+    print(f"  cleared {display_name}")
 
 
 def _resolve_compose_command() -> List[str] | None:
