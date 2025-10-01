@@ -41,7 +41,11 @@ There are some requests for the agent that will necessarily require the agent to
    - To double check, run `ps | grep '/usr/bin/java'`
 
 2. **Run the profiler (assuming PID: 1)**
-   - `asprof -d 10 1 -f '/tmp/[PROFILE_FROM_SESSION]'`. This outputs a version of the profile in text which is suitable for LLM consumption
-   - `asprof -d 10 1 -f '/tmp/[FLAMEGRAPH_PROFILE_FROM_SESSION].html`. This outputs a version of the profile that is human readable. This is useful if you are compiling an artifact for human review later. You should copy this file from the docker container in to the repo directory `./sessions/[CODEX_SESSION_ID]` for review later
+   - `asprof -d 10 -o tree 1 -f '/tmp/[FLAMEGRAPH_PROFILE_FROM_SESSION].html` You should copy this file from the docker container in to the repo directory `./sessions/[CODEX_SESSION_ID]` for review later. You can youse BeautifulSoup to parse this profile and grab insights from it.
 
-
+3. **Execute action under profile**
+   - If a query is what's being profiled, note that by default Druid caches query results. To get a real profile you must disable this. 
+```
+    {"query":"SELECT COUNT(*) FROM \"wikipedia-2\" WHERE contains_string(\"comment\", 'bot')","context":
+        {"useCache":false,"populateCache":false,"useResultLevelCache":false,"populateResultLevelCache":false}}
+```

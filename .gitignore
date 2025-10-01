@@ -2,3 +2,5 @@
 /druid/overrides
 /druid/storage
 /druid-src/
+/sessions/
+.DS_Store
