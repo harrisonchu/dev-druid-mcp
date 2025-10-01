@@ -100,8 +100,18 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 - If a service complains about missing extensions, ensure the extension name in `_common/common.runtime.properties` matches the directory under `/opt/druid/extensions` (use `docker run --rm --entrypoint ls apache/druid:29.0.0 /opt/druid/extensions`).
 - Postgres schema issues? Remove the Docker volume with `docker volume rm dev-druid-mcp_metadata-data` to reset metadata storage.
 
+## Tools
+
+### Persona-Chat ingest helper
+- Script: `tools/ingest_persona_chat.py`
+- Purpose: downloads the Hugging Face Persona-Chat dataset, writes a JSONL file under `druid/storage/ingestion/`, and submits an `index_parallel` task that loads each conversation (persona plus utterances JSON blobs) into the `conversations-2` datasource with at least five hash partitions.
+- Usage:
+  ```bash
+  conda activate druid
+  python tools/ingest_persona_chat.py --wait
+  ```
+  The command emits progress, waits for the ingestion task to finish, and leaves the exported file at `druid/storage/ingestion/persona-chat-conversations-2.jsonl` for reuse.
+
 ## Next steps
-- Load sample data via the Druid console (`http://localhost:8888`) or API once the stack is up.
-- Wire additional observability tooling (Prometheus, Grafana) by extending `compose.yaml` if needed.
-- making sure druid-src is always running the right version that container is pulling seems brittle.
-- how to expose hotswap as a tool? and telemetry collection also as tools. MCP?
+- Load additional sample data via the Druid console (`http://localhost:8888`) or API once the stack is up.
+- Explore segment health with `curl http://localhost:8081/druid/coordinator/v1/datasources`.
