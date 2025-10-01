@@ -1,6 +1,6 @@
 # Agent Workflow Tips
 
-This repository expects MCP agents to follow a tight loop when modifying Apache Druid source code and validating the running stack. A good default flow:
+This repository expects agents to follow a tight loop when modifying Apache Druid source code and validating the running stack. A good default flow:
 
 1. **Prepare the stack**
    - Ensure Docker Desktop is running.
@@ -31,3 +31,17 @@ This repository expects MCP agents to follow a tight loop when modifying Apache 
    - Leave Docker services running if you intend more edits; use `docker compose down` only when finished.
 
 Keeping to this loop avoids stale jars or logs confusing subsequent validation passes.
+
+# Profiling
+
+There are some requests for the agent that will necessarily require the agent to profile Druid. To this end, every Druid container ships with async-profiler https://github.com/async-profiler/async-profiler/tree/master. A typical workflow:
+
+1. **Find the Java process ID for the Druid service container**
+   - This is typically just PID: 1
+   - To double check, run `ps | grep '/usr/bin/java'`
+
+2. **Run the profiler (assuming PID: 1)**
+   - `asprof -d 10 1 -f '/tmp/[PROFILE_FROM_SESSION]'`. This outputs a version of the profile in text which is suitable for LLM consumption
+   - `asprof -d 10 1 -f '/tmp/[FLAMEGRAPH_PROFILE_FROM_SESSION].html`. This outputs a version of the profile that is human readable. This is useful if you are compiling an artifact for human review later. You should copy this file from the docker container in to the repo directory `./sessions/[CODEX_SESSION_ID]` for review later
+
+
