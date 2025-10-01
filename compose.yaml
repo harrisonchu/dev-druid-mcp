@@ -47,6 +47,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8081:8081"
     depends_on:
@@ -72,6 +77,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8090:8090"
     depends_on:
@@ -97,6 +107,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8888:8888"
     depends_on:
@@ -122,6 +137,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8082:8082"
     depends_on:
@@ -148,6 +168,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8083:8083"
     depends_on:
@@ -174,6 +199,11 @@ services:
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
+    cap_add:
+      - SYS_ADMIN
+      - SYS_PTRACE
+    security_opt:
+      - apparmor:unconfined
     ports:
       - "8091:8091"
     depends_on:
