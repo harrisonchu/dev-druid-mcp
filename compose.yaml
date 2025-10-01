@@ -39,12 +39,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: coordinator
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8081:8081"
     depends_on:
@@ -62,12 +64,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: overlord
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8090:8090"
     depends_on:
@@ -85,12 +89,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: router
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8888:8888"
     depends_on:
@@ -108,12 +114,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: broker
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8082:8082"
     depends_on:
@@ -132,12 +140,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: historical
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8083:8083"
     depends_on:
@@ -156,12 +166,14 @@ services:
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: middlemanager
+      PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid/conf/druid:/opt/druid/conf/druid:ro
       - ./druid/logs:/opt/druid/log
       - ./druid/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
       - ./druid/storage:/opt/druid/var/druid
+      - ./tools/async-profiler:/tmp/async-profiler:ro
     ports:
       - "8091:8091"
     depends_on:
