@@ -150,7 +150,7 @@ services:
       - metadata-storage
       - zookeeper
 
-  historical: &historical_service
+  historical-1: &historical_service
     image: apache/druid:29.0.0
     container_name: druid-historical-1
     command: ["historical"]
