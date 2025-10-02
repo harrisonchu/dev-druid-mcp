@@ -5,6 +5,7 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 1. **Prepare the stack**
    - Ensure Docker Desktop is running.
    - From repo root run `docker compose up -d`; wait until every service reports `Up` (`docker compose ps`).
+   - Ensure runtime data from previous sessions are removed. These are stored in `druid-runtime/logs`, `druid-runtime/storage` and `druid-runtime/overrides`
 
 2. **Make code changes in `druid-src/`**
    - Run a "git stash" to make sure no changes from previous sessions are included
@@ -28,6 +29,8 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 
 5. **Cleanup**
    - Remove temporary `.pyc` caches if created manually.
+   - Leave Docker services running if you intend more edits; use `docker compose down` only when finished.
+   - Ensure runtime data from this session is cleaned up. These are stored in `druid-runtime/logs`, `druid-runtime/storage` and `druid-runtime/overrides`
    - Leave Docker services running if you intend more edits; use `docker compose down` only when finished.
 
 Keeping to this loop avoids stale jars or logs confusing subsequent validation passes.
