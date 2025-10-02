@@ -32,6 +32,15 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 
 Keeping to this loop avoids stale jars or logs confusing subsequent validation passes.
 
+# Desired Outputs For Each Session
+
+- When the session seems like it's drawing to a conclusion, ask the human operator if they would like you to output all relevant artifacts under the `./sessions/[UNIQUE_SESSION_NAME]` directory. Some example of artifacts:
+  - Explanations written in simple markdown.
+  - Flamegraphs if the task involved profiling
+  - Any scripts to re-trigger queries or events that lead to the profiling result
+  - Mermaid diagrams to any visualizations or diagrams that can explain both service or class interactions or event sequences. https://mermaid.js.org
+  - Unit tests in `druid-src` that the human operator can exercise and step through to gain a deeper understanding of a core flow or concept
+
 # Querying Best Practices
 
 - Submit ad-hoc SQL through the router on port `8888`, e.g. `curl -sS -X POST http://localhost:8888/druid/v2/sql/ -H 'Content-Type: application/json' -d '{"query":"SELECT COUNT(*) FROM wikipedia"}'` 
