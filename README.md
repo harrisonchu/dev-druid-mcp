@@ -1,10 +1,25 @@
 # dev-druid-mcp
 
-Local Apache Druid development environment wired for MCP agents.
+`druid-agent-sandbox` gives your agent CLI a sandbox to deeply understand the Druid sourcecode to give you answers and suggestions grounded in runtime reality. It enables the agent to make code changes, deploy quickly, and the tools to observe and profile the results. Artifacts from each "session" are stored under the `session` directory for review later. These artifacts can be written markdowns, unit tests, or even sequence diagrams.
+
+## Usage
+1. Setup the repo
+   ```bash
+   ./quickstart.sh
+   ```
+2. (Optional) Check status:
+   ```bash
+   docker compose ps
+   ```
+   All services should show `Up`; Postgres reports `healthy` once ready.
+   Access the Druid web console via the router at <http://localhost:8888>.
+3. At the root directory, ask `codex` any question:
+   ```bash
+   codex "I'm interested in the performance chatacteristics of Druids contains_string text search filter. Profile this and tell me what are the most likely areas of improvement. you can use the 'utterances' column in the 'conversations-2' datasource. Before you begin please remember to read AGENTS.md for common workflows and tips to get your job done"
+   ```
 
 ## What you get
-- Docker Compose stack with Zookeeper, PostgreSQL metadata store, and standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`).
-- Quickstart-derived configuration tree under `druid/conf` with lighter memory footprints for laptop use.
+- Local Docker Compose stack with Zookeeper, PostgreSQL metadata store, standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`), and configuration tree under `druid/conf` with lighter memory footprints for laptop use.
 - Bind mounts for logs (`druid/logs`), deep storage (`druid/storage`), and override jars (`druid/overrides`).
 
 ```
@@ -27,32 +42,7 @@ Local Apache Druid development environment wired for MCP agents.
 - Docker and Docker Compose (Compose V2 CLI).
 - Enough free RAM/CPU for six JVMs plus the router; defaults stay under ~8 GiB RAM.
 
-## Usage
-1. Start the stack:
-   ```bash
-   docker compose up -d
-   ```
-2. Check status:
-   ```bash
-   docker compose ps
-   ```
-   All services should show `Up`; Postgres reports `healthy` once ready.
-3. Access the Druid web console via the router at <http://localhost:8888>.
-4. Tail logs (examples):
-   ```bash
-   docker compose logs -f router
-   docker compose logs -f coordinator
-   docker compose logs -f overlord
-   ```
-   Service-specific logs also land in `druid/logs/${sys:druid.node.type}.log` because of the bind mount.
-5. Restart a component after tweaking configs:
-   ```bash
-   docker compose restart broker
-   ```
-6. Shut everything down (keeps the metadata volume):
-   ```bash
-   docker compose down
-   ```
+
 7. Rebuild and hot swap edited Druid modules without a full cluster restart:
    ```bash
    python3 tools/hotswap.py --dry-run
