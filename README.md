@@ -55,7 +55,7 @@
 
 ### Wikipedia dataset ingestion
 - Script: `tools/ingest_wikipedia.py`
-- Purpose: downloads the Hugging Face Persona-Chat dataset, writes a JSONL file under `druid-runtime/storage/ingestion/`, and submits an `index_parallel` task that loads into the `conversations-2` datasource with at least five hash partitions. This is a good dataset to use if you are testing or profiling something that can take advantage of either high segment counts or columns with long text strings.
+- Purpose: downloads the wikipedia dataset. This is suitable for general tasks.
 - Usage: [TODO]
 
 ## Configuration knobs
