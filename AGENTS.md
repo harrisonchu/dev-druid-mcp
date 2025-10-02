@@ -8,21 +8,21 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 
 2. **Make code changes in `druid-src/`**
    - Run a "git stash" to make sure no changes from previous sessions are included
-   - Edit Java modules inside `druid-src`, not `druid/`.
+   - Edit Java modules inside `druid-src`, not `druid-runtime/`.
    - Keep the change focused; 
 
 3. **Rebuild & deploy with the hotswap script**
    - Invoke `python3 tools/hotswap.py` (use `--dry-run` first if unsure). The script will automatically figure out which modules to rebuild. However, if you absolutely know what you are doing, you can tell it exactly which modules to rebuild via python3 tools/hotswap.py --modules <module>
    - The script will:
      - Build the targeted Maven modules.
-     - Remove stale jars from `druid/overrides` before copying in the new artifacts.
-     - Clear `druid/logs` so the next startup contains only fresh output.
+     - Remove stale jars from `druid-runtime/overrides` before copying in the new artifacts.
+     - Clear `druid-runtime/logs` so the next startup contains only fresh output.
      - Run `docker compose restart` to bounce all services.
    - Watch the stdout for the JSON summary; it should list the jars deployed and services restarted.
    - The script can take up to 3 minutes to complete.
 
 4. **Verify results**
-   - Tail logs from `druid/logs/` (e.g., `tail -n 100 druid/logs/router.log`) or via `docker compose logs <service>`.
+   - Tail logs from `druid-runtime/logs/` (e.g., `tail -n 100 druid-runtime/logs/router.log`) or via `docker compose logs <service>`.
    - Confirm behavior from logs if any
    - If verification fails, repeat: adjust code, rerun the script, re-check logs.
 

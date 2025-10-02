@@ -19,14 +19,15 @@
    ```
 
 ## What you get
-- Local Docker Compose stack with Zookeeper, PostgreSQL metadata store, standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`), and configuration tree under `druid/conf` with lighter memory footprints for laptop use.
-- Bind mounts for logs (`druid/logs`), deep storage (`druid/storage`), and override jars (`druid/overrides`).
-
+- Local Docker Compose stack with Zookeeper, PostgreSQL metadata store, standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`), and configuration tree under `druid-runtime/conf` with lighter memory footprints for laptop use.
+- Bind mounts for logs (`druid-runtime/logs`), deep storage (`druid-runtime/storage`), and override jars (`druid-runtime/overrides`).
+- Artifacts from each session with the agent will be persisted in the `sessions` directory.
+- Tools that the agent can use to either deploy code, profile, or ingest data.
 ```
 .
 ├── compose.yaml
 ├── .env
-├── druid/
+├── druid-runtime/
 │   ├── conf/druid/cluster
 │   │   ├── _common/
 │   │   ├── master/{coordinator,overlord}/
@@ -35,30 +36,38 @@
 │   ├── logs/
 │   ├── overrides/
 │   └── storage/
-└── druid-src/            # drop a Druid distribution here if you want to build from source
+├── druid-src/           # quickstart script will create this for you. This is where modifiable Druid source code lives.
+├── sessions/           # agent will drop any artifacts from each session here. e.g. explanations, graphs, etc
+└── tools/              # (TODO)
 ```
 
-## Prerequisites
-- Docker and Docker Compose (Compose V2 CLI).
-- Enough free RAM/CPU for six JVMs plus the router; defaults stay under ~8 GiB RAM.
 
+## Tools
 
-7. Rebuild and hot swap edited Druid modules without a full cluster restart:
-   ```bash
-   python3 tools/hotswap.py --dry-run
-   ```
-   The Python helper inspects your changes (or an explicit `--modules` list), runs a targeted `mvn -pl <modules> -am -DskipTests package`, copies the resulting `target/*.jar` outputs into `druid/overrides/`, restarts the Docker services, and reports a JSON status summary. Drop the `--dry-run` flag to apply changes for real once you’re satisfied with the detected modules.
+### Persona-Chat dataset ingestion
+- Script: `tools/ingest_persona_chat.py`
+- Purpose: downloads the Hugging Face Persona-Chat dataset, writes a JSONL file under `druid-runtime/storage/ingestion/`, and submits an `index_parallel` task that loads into the `conversations-2` datasource with at least five hash partitions. This is a good dataset to use if you are testing or profiling something that can take advantage of either high segment counts or columns with long text strings.
+- Usage:
+  ```bash
+  python tools/ingest_persona_chat.py --wait
+  ```
+  The command emits progress, waits for the ingestion task to finish, and leaves the exported file at `druid-runtime/storage/ingestion/persona-chat-conversations-2.jsonl` for reuse.
+
+### Wikipedia dataset ingestion
+- Script: `tools/ingest_wikipedia.py`
+- Purpose: downloads the Hugging Face Persona-Chat dataset, writes a JSONL file under `druid-runtime/storage/ingestion/`, and submits an `index_parallel` task that loads into the `conversations-2` datasource with at least five hash partitions. This is a good dataset to use if you are testing or profiling something that can take advantage of either high segment counts or columns with long text strings.
+- Usage: [TODO]
 
 ## Configuration knobs
 ### Shared settings
 - `.env` – change `POSTGRES_*` credentials or the default log/tmp directories.
-- `druid/conf/druid/cluster/_common/common.runtime.properties`
+- `druid-runtime/conf/druid/cluster/_common/common.runtime.properties`
   - Extension list already includes `postgresql-metadata-storage`.
   - Metadata connection string targets the bundled Postgres service (`metadata-storage`).
   - Adjust deep storage and indexing log locations here if you relocate bind mounts.
 
 ### Service runtime properties
-- Coordinator: `druid/conf/druid/cluster/master/coordinator/runtime.properties`
+- Coordinator: `druid-runtime/conf/druid/cluster/master/coordinator/runtime.properties`
 - Overlord: `.../master/overlord/runtime.properties`
 - Broker: `.../query/broker/runtime.properties`
 - Router: `.../query/router/runtime.properties`
@@ -71,11 +80,11 @@ Use these files for port changes, cache sizes, processing buffers, and service-s
 Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, or direct memory flags there when you need to adjust heap sizes.
 
 ### Overrides and custom code
-- Drop additional jars in `druid/overrides` to make them visible under `/opt/druid/overrides` inside every container.
+- Drop additional jars in `druid-runtime/overrides` to make them visible under `/opt/druid/overrides` inside every container.
 - Bind mount `druid-override.sh` over `/opt/druid/bin/druid.sh` so those jars are first on the runtime classpath; configure `DRUID_OVERRIDES` if you need a different glob.
   ```yaml
   volumes:
-    - ./druid/overrides:/opt/druid/overrides:ro
+    - ./druid-runtime/overrides:/opt/druid/overrides:ro
     - ./druid-override.sh:/opt/druid/bin/druid.sh:ro
   environment:
     - DRUID_OVERRIDES=/opt/druid/overrides/*
@@ -90,17 +99,6 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 - If a service complains about missing extensions, ensure the extension name in `_common/common.runtime.properties` matches the directory under `/opt/druid/extensions` (use `docker run --rm --entrypoint ls apache/druid:29.0.0 /opt/druid/extensions`).
 - Postgres schema issues? Remove the Docker volume with `docker volume rm dev-druid-mcp_metadata-data` to reset metadata storage.
 
-## Tools
-
-### Persona-Chat ingest helper
-- Script: `tools/ingest_persona_chat.py`
-- Purpose: downloads the Hugging Face Persona-Chat dataset, writes a JSONL file under `druid/storage/ingestion/`, and submits an `index_parallel` task that loads each conversation (persona plus utterances JSON blobs) into the `conversations-2` datasource with at least five hash partitions.
-- Usage:
-  ```bash
-  conda activate druid
-  python tools/ingest_persona_chat.py --wait
-  ```
-  The command emits progress, waits for the ingestion task to finish, and leaves the exported file at `druid/storage/ingestion/persona-chat-conversations-2.jsonl` for reuse.
 
 ## Next steps
 - Load additional sample data via the Druid console (`http://localhost:8888`) or API once the stack is up.

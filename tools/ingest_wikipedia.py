@@ -18,7 +18,7 @@ SOURCE_RELATIVE_PATH = (
     Path("druid-src") / "examples" / "quickstart" / "tutorial" / DATASET_FILENAME
 )
 DESTINATION_RELATIVE_PATH = (
-    Path("druid") / "storage" / "ingestion" / "wikipedia" / DATASET_FILENAME
+    Path("druid-runtime") / "storage" / "ingestion" / "wikipedia" / DATASET_FILENAME
 )
 DATASOURCE_NAME = "wikipedia"
 INTERVAL = "2015-09-12/2015-09-13"
@@ -45,13 +45,13 @@ def parse_args() -> argparse.Namespace:
 
 
 def ensure_under_storage(repo_root: Path, output_path: Path) -> Path:
-    storage_root = (repo_root / "druid" / "storage").resolve()
+    storage_root = (repo_root / "druid-runtime" / "storage").resolve()
     resolved_output = output_path.resolve()
     try:
         resolved_output.relative_to(storage_root)
     except ValueError as exc:
         raise SystemExit(
-            f"Output path {resolved_output} is outside druid/storage; place files under druid/storage "
+            f"Output path {resolved_output} is outside druid-runtime/storage; place files under druid-runtime/storage "
             "so the containers can read them."
         ) from exc
     resolved_output.parent.mkdir(parents=True, exist_ok=True)
@@ -178,10 +178,10 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     args = parse_args()
 
-    print("Copying bundled wikipedia dataset into druid/storage ...")
+    print("Copying bundled wikipedia dataset into druid-runtime/storage ...")
     dataset_path = copy_dataset(repo_root)
 
-    storage_root = (repo_root / "druid" / "storage").resolve()
+    storage_root = (repo_root / "druid-runtime" / "storage").resolve()
     relative_path = dataset_path.relative_to(storage_root)
     container_base_dir = Path("/opt/druid/var/druid") / relative_path.parent
     filename = relative_path.name

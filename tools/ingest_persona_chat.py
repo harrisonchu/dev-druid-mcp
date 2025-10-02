@@ -12,8 +12,8 @@ from typing import Tuple
 
 
 DATASET_REPO_ID = "AlekseyKorshuk/persona-chat"
-CACHE_RELATIVE_PATH = Path("sessions") / "persona_chat_cache"
-OUTPUT_RELATIVE_PATH = Path("druid") / "storage" / "ingestion" / "persona-chat-conversations-2.jsonl"
+CACHE_RELATIVE_PATH = Path("druid-runtime") / "persona_chat_cache"
+OUTPUT_RELATIVE_PATH = Path("druid-runtime") / "storage" / "ingestion" / "persona-chat-conversations-2.jsonl"
 DATASOURCE_NAME = "conversations-2"
 
 try:
@@ -65,14 +65,14 @@ def parse_args() -> argparse.Namespace:
 
 
 def ensure_under_storage(repo_root: Path, output_path: Path) -> Path:
-    storage_root = (repo_root / "druid" / "storage").resolve()
+    storage_root = (repo_root / "druid-runtime" / "storage").resolve()
     resolved_output = output_path.resolve()
     try:
         resolved_output.relative_to(storage_root)
     except ValueError as exc:
         raise SystemExit(
-            f"Output path {resolved_output} is outside the shared druid/storage directory; "
-            "place the file under druid/storage so the containers can read it."
+            f"Output path {resolved_output} is outside the shared druid-runtime/storage directory; "
+            "place the file under druid-runtime/storage so the containers can read it."
         ) from exc
     resolved_output.parent.mkdir(parents=True, exist_ok=True)
     return resolved_output
@@ -213,7 +213,7 @@ def main() -> int:
     if rows == 0:
         raise RuntimeError("No conversation rows were written; check the dataset contents.")
 
-    storage_root = (repo_root / "druid" / "storage").resolve()
+    storage_root = (repo_root / "druid-runtime" / "storage").resolve()
     relative_path = output_path.relative_to(storage_root)
     container_base_dir = Path("/opt/druid/var/druid") / relative_path.parent
     filename = relative_path.name
