@@ -41,11 +41,11 @@ services:
       druid_host: coordinator
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN
@@ -71,11 +71,11 @@ services:
       druid_host: overlord
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN
@@ -101,11 +101,11 @@ services:
       druid_host: router
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN
@@ -131,11 +131,11 @@ services:
       druid_host: broker
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN
@@ -162,11 +162,11 @@ services:
       druid_host: historical
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN
@@ -193,11 +193,11 @@ services:
       druid_host: middlemanager
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
-      - ./druid/conf/druid:/opt/druid/conf/druid:ro
-      - ./druid/logs:/opt/druid/log
-      - ./druid/overrides:/opt/druid/overrides:ro
+      - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
+      - ./druid-runtime/logs:/opt/druid/log
+      - ./druid-runtime/overrides:/opt/druid/overrides:ro
       - ./druid-override.sh:/druid.sh:ro
-      - ./druid/storage:/opt/druid/var/druid
+      - ./druid-runtime/storage:/opt/druid/var/druid
       - ./tools/async-profiler:/tmp/async-profiler:ro
     cap_add:
       - SYS_ADMIN

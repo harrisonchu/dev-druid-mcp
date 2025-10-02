@@ -52,7 +52,7 @@ def main() -> int:
     args = parse_args()
     repo_root = Path(__file__).resolve().parent.parent
     druid_src = repo_root / "druid-src"
-    overrides_dir = repo_root / "druid" / "overrides"
+    overrides_dir = repo_root / "druid-runtime" / "overrides"
     try:
         overrides_display = overrides_dir.relative_to(repo_root).as_posix()
     except ValueError:
@@ -87,7 +87,7 @@ def main() -> int:
         dry_run=args.dry_run,
     )
 
-    logs_dir = repo_root / "druid" / "logs"
+    logs_dir = repo_root / "druid-runtime" / "logs"
     try:
         logs_display = logs_dir.relative_to(repo_root).as_posix()
     except ValueError:
