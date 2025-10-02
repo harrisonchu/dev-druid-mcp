@@ -32,6 +32,11 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 
 Keeping to this loop avoids stale jars or logs confusing subsequent validation passes.
 
+# Querying Best Practices
+
+- Submit ad-hoc SQL through the router on port `8888`, e.g. `curl -sS -X POST http://localhost:8888/druid/v2/sql/ -H 'Content-Type: application/json' -d '{"query":"SELECT COUNT(*) FROM wikipedia"}'` 
+- If you need uncached results for profiling or validation, add a `context` with `useCache` and `populateCache` set to `false` in the SQL payload.
+
 # Profiling
 
 There are some requests for the agent that will necessarily require the agent to profile Druid. To this end, every Druid container ships with async-profiler https://github.com/async-profiler/async-profiler/tree/master. A typical workflow:

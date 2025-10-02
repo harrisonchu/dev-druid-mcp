@@ -150,13 +150,13 @@ services:
       - metadata-storage
       - zookeeper
 
-  historical:
+  historical: &historical_service
     image: apache/druid:29.0.0
     container_name: druid-historical
     command: ["historical"]
     env_file:
       - .env
-    environment:
+    environment: &historical_environment
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
       druid_host: historical
@@ -180,6 +180,24 @@ services:
       - overlord
       - metadata-storage
       - zookeeper
+
+  historical-2:
+    <<: *historical_service
+    container_name: druid-historical-2
+    environment:
+      <<: *historical_environment
+      druid_host: historical-2
+    ports:
+      - "8084:8083"
+
+  historical-3:
+    <<: *historical_service
+    container_name: druid-historical-3
+    environment:
+      <<: *historical_environment
+      druid_host: historical-3
+    ports:
+      - "8085:8083"
 
   middlemanager:
     image: apache/druid:29.0.0
