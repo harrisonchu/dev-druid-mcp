@@ -1,6 +1,6 @@
 # dev-druid-mcp
 
-`druid-agent-sandbox` gives your agent CLI a sandbox to deeply understand
+`druid-agent-sandbox` gives your agent CLI a sandbox to deeply understand the Druid sourcecode to give you answers and suggestions grounded in runtime reality. It enables the agent to make code changes, deploy quickly, and the tools to observe and profile the results. Artifacts from each "session" are stored under the `session` directory for review later. These artifacts can be written markdowns, unit tests, or even sequence diagrams.
 
 ## What you get
 - Docker Compose stack with Zookeeper, PostgreSQL metadata store, and standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`).
