@@ -1,4 +1,7 @@
 /druid-runtime/
+/druid-runtime/overrides
+/druid-runtime/logs
+/druid-runtime/storage
 /druid-src/
 /sessions/
 .DS_Store
