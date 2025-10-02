@@ -54,3 +54,7 @@ There are some requests for the agent that will necessarily require the agent to
     {"query":"SELECT COUNT(*) FROM \"wikipedia-2\" WHERE contains_string(\"comment\", 'bot')","context":
         {"useCache":false,"populateCache":false,"useResultLevelCache":false,"populateResultLevelCache":false}}
 ```
+
+# Loading Data
+
+- Different scripts for loading different types of data into Druid for testing, profiling, and verification are available under the `./tools` directory.
