@@ -152,14 +152,14 @@ services:
 
   historical: &historical_service
     image: apache/druid:29.0.0
-    container_name: druid-historical
+    container_name: druid-historical-1
     command: ["historical"]
     env_file:
       - .env
     environment: &historical_environment
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
-      druid_host: historical
+      druid_host: historical-1
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
