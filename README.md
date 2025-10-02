@@ -101,5 +101,5 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 
 
 ## Next steps
-- Load additional sample data via the Druid console (`http://localhost:8888`) or API once the stack is up.
-- Explore segment health with `curl http://localhost:8081/druid/coordinator/v1/datasources`.
+- quickstart should check python and dependencies installed
+- docker multi historical setup
