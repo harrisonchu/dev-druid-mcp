@@ -1,6 +1,6 @@
 # dev-druid-mcp
 
-Local Apache Druid development environment wired for MCP agents.
+`druid-agent-sandbox` gives your agent CLI a sandbox to deeply understand
 
 ## What you get
 - Docker Compose stack with Zookeeper, PostgreSQL metadata store, and standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`).
