@@ -103,3 +103,5 @@ Each service directory also contains a `jvm.config`. Update the `-Xms`, `-Xmx`, 
 ## Next steps
 - quickstart should check python and dependencies installed
 - docker multi historical setup
+- figure out why AGENTS.md not respected
+- bind mount Postgres instead of docker mount
