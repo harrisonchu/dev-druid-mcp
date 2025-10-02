@@ -52,6 +52,7 @@ Keeping to this loop avoids stale jars or logs confusing subsequent validation p
 # Profiling
 
 There are some requests for the agent that will necessarily require the agent to profile Druid. To this end, every Druid container ships with async-profiler https://github.com/async-profiler/async-profiler/tree/master. A typical workflow:
+If you are profiling queries, make sure you try a variety of different queries for a given scenario to make sure you're not accidentally profiling just one specific code path.
 
 1. **Find the Java process ID for the Druid service container**
    - This is typically just PID: 1
