@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+ ~ Apache Druid log configuration copied from the quickstart distribution.
+ -->
+<Configuration status="WARN">
+  <Properties>
+    <!-- Override by setting DRUID_LOG_DIR env var; defaults to ./log in container. -->
+    <Property name="druid.log.path" value="log" />
+    <!-- Use node type when it is provided, otherwise fall back to the container hostname. -->
+    <Property name="druid.log.basename" value="${sys:druid.node.type:-${env:druid_host:-druid}}" />
+  </Properties>
+
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{ISO8601} %p [%t] %c -%notEmpty{ [%markerSimpleName]} %m%n"/>
+    </Console>
+
+    <RollingRandomAccessFile name="FileAppender"
+                             fileName="${sys:druid.log.path}/${sys:druid.log.basename}.log"
+                             filePattern="${sys:druid.log.path}/${sys:druid.log.basename}.%d{yyyyMMdd}.log">
+      <PatternLayout pattern="%d{ISO8601} %p [%t] %c -%notEmpty{ [%markerSimpleName]} %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+      </Policies>
+      <DefaultRolloverStrategy>
+        <Delete basePath="${sys:druid.log.path}/" maxDepth="1">
+          <IfFileName glob="*.log" />
+          <IfLastModified age="7d" />
+        </Delete>
+      </DefaultRolloverStrategy>
+    </RollingRandomAccessFile>
+  </Appenders>
+
+  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="FileAppender"/>
+    </Root>
+
+    <Logger name="org.apache.druid.server.QueryResource" level="info" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+    <Logger name="org.apache.druid.server.QueryLifecycle" level="info" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+
+    <Logger name="org.apache.druid.server.coordinator" level="info" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+
+    <Logger name="org.apache.druid.segment" level="info" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+
+    <Logger name="org.apache.druid.initialization" level="info" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+
+    <Logger name="org.skife.config" level="warn" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+    <Logger name="com.sun.jersey.guice" level="warn" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+
+    <Logger name="org.apache.kafka.clients.consumer.internals" level="warn" additivity="false">
+      <Appender-ref ref="FileAppender"/>
+    </Logger>
+  </Loggers>
+</Configuration>
