@@ -21,7 +21,7 @@
 ## What you get
 - Local Docker Compose stack with Zookeeper, PostgreSQL metadata store, standalone Druid services (`coordinator`, `overlord`, `broker`, `router`, `historical`, `middleManager`), and configuration tree under `druid-runtime/conf` with lighter memory footprints for laptop use.
 - Bind mounts for logs (`druid-runtime/logs`), deep storage (`druid-runtime/storage`), and override jars (`druid-runtime/overrides`).
-- Artifacts from each session with the agent will be persisted in the `sessions` directory.
+- Artifacts from each session with the agent will be persisted in the top level `sessions` directory.
 - Tools that the agent can use to either deploy code, profile, or ingest data.
 ```
 .
