@@ -5,6 +5,7 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 1. **Prepare the stack**
    - Ensure Docker Desktop is running.
    - From repo root run `docker compose up -d`; wait until every service reports `Up` (`docker compose ps`).
+   - Ensure runtime data from previous sessions are removed. These are stored in `druid-runtime/logs`, `druid-runtime/storage` and `druid-runtime/overrides`
 
 2. **Make code changes in `druid-src/`**
    - Run a "git stash" to make sure no changes from previous sessions are included
@@ -29,8 +30,19 @@ This repository expects agents to follow a tight loop when modifying Apache Drui
 5. **Cleanup**
    - Remove temporary `.pyc` caches if created manually.
    - Leave Docker services running if you intend more edits; use `docker compose down` only when finished.
+   - Ensure runtime data from this session is cleaned up. These are stored in `druid-runtime/logs`, `druid-runtime/storage` and `druid-runtime/overrides`
+   - Leave Docker services running if you intend more edits; use `docker compose down` only when finished.
 
 Keeping to this loop avoids stale jars or logs confusing subsequent validation passes.
+
+# Desired Outputs For Each Session
+
+- When the session seems like it's drawing to a conclusion, ask the human operator if they would like you to output all relevant artifacts under the `./sessions/[UNIQUE_SESSION_NAME]` directory. Some example of artifacts:
+  - Explanations written in simple markdown.
+  - Flamegraphs if the task involved profiling
+  - Any scripts to re-trigger queries or events that lead to the profiling result
+  - Mermaid diagrams to any visualizations or diagrams that can explain both service or class interactions or event sequences. https://mermaid.js.org
+  - Unit tests in `druid-src` that the human operator can exercise and step through to gain a deeper understanding of a core flow or concept
 
 # Querying Best Practices
 
@@ -40,6 +52,7 @@ Keeping to this loop avoids stale jars or logs confusing subsequent validation p
 # Profiling
 
 There are some requests for the agent that will necessarily require the agent to profile Druid. To this end, every Druid container ships with async-profiler https://github.com/async-profiler/async-profiler/tree/master. A typical workflow:
+If you are profiling queries, make sure you try a variety of different queries for a given scenario to make sure you're not accidentally profiling just one specific code path.
 
 1. **Find the Java process ID for the Druid service container**
    - This is typically just PID: 1
@@ -54,3 +67,7 @@ There are some requests for the agent that will necessarily require the agent to
     {"query":"SELECT COUNT(*) FROM \"wikipedia-2\" WHERE contains_string(\"comment\", 'bot')","context":
         {"useCache":false,"populateCache":false,"useResultLevelCache":false,"populateResultLevelCache":false}}
 ```
+
+# Loading Data
+
+- Different scripts for loading different types of data into Druid for testing, profiling, and verification are available under the `./tools` directory.

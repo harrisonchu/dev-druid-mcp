@@ -21,7 +21,7 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - metadata-data:/var/lib/postgresql/data
+      - ./druid-runtime/storage/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-druid} -d ${POSTGRES_DB:-druid}"]
       interval: 5s
@@ -150,16 +150,16 @@ services:
       - metadata-storage
       - zookeeper
 
-  historical: &historical_service
+  historical-1: &historical_service
     image: apache/druid:29.0.0
-    container_name: druid-historical
+    container_name: druid-historical-1
     command: ["historical"]
     env_file:
       - .env
     environment: &historical_environment
       DRUID_SET_HOST: "0"
       DRUID_OVERRIDES: /opt/druid/overrides/*
-      druid_host: historical
+      druid_host: historical-1
       PATH: "/tmp/async-profiler/bin:${PATH}"
     volumes:
       - ./druid-runtime/conf/druid:/opt/druid/conf/druid:ro
@@ -189,15 +189,6 @@ services:
       druid_host: historical-2
     ports:
       - "8084:8083"
-
-  historical-3:
-    <<: *historical_service
-    container_name: druid-historical-3
-    environment:
-      <<: *historical_environment
-      druid_host: historical-3
-    ports:
-      - "8085:8083"
 
   middlemanager:
     image: apache/druid:29.0.0
@@ -229,6 +220,3 @@ services:
       - overlord
       - metadata-storage
       - zookeeper
-
-volumes:
-  metadata-data:
