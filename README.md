@@ -1,4 +1,4 @@
-# dev-druid-mcp
+# druid-agent-sandbox
 `druid-agent-sandbox` is a self-contained runtime sandbox for LLM agents.
 Your agent (e.g. Codex / Claude Code) can pull Druid source, modify code, hot-swap JARs, load datasets, and run live queries — producing runtime-grounded traces instead of static guesses.
 
